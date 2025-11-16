@@ -64,10 +64,13 @@ customer-frontend/
 1. Clone the repository
 2. Ensure Docker and Docker Compose are installed
 3. Run: `docker-compose up`
-4. Access:
-   - Customer Store: http://localhost:3000
-   - Admin Panel: http://localhost:3001
-   - Backend API: http://localhost:8000/api
+
+## Live Deployment
+
+- **Repository:** https://github.com/Jaishankar7655/store-app
+- **Frontend (Customer Store):** http://135.13.9.61/
+- **Admin Panel:** http://135.13.9.61/admin/
+- **Backend API:** http://135.13.9.61:8000/api
 
 ## API Endpoints
 
