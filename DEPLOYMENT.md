@@ -1,254 +1,98 @@
-# Deployment Guide
+# Project Information
 
-The application is deployed in two places:
+## About This Project
 
-1. Direct Server: IP 135.13.9.61
+This is a full-stack e-commerce application for an online grocery store. The project demonstrates modern web development practices with a complete REST API backend and responsive user interfaces.
+
+## Technologies Used
+
+### Backend
+- Django 4.2.7 - Python web framework
+- Django REST Framework - REST API development
+- JWT Authentication - Secure token-based authentication
+- SQLite/PostgreSQL - Database management
+- Docker - Containerization
+
+### Frontend
+- React 18.3.1 - JavaScript library for UI
+- Vite 7.2.2 - Modern build tool
+- Tailwind CSS 3.4.14 - Utility-first CSS framework
+- React Router 6.26.2 - Client-side routing
+- Axios 1.7.7 - HTTP client
+
+### Infrastructure
+- Nginx - Web server and reverse proxy
+- Docker & Docker Compose - Container orchestration
+- Deployed on Azure App Service and direct Linux server
+
+## Application Components
+
+The application consists of three main parts:
+
+1. Backend API (Django)
+   - User authentication and authorization
+   - Product management
+   - Order processing
+   - Shopping cart management
+   - Sales reporting
+
+2. Admin Panel (React)
+   - Dashboard for store managers
+   - Product and inventory management
+   - Order management
+   - User management
+   - Sales analytics
+
+3. Customer Frontend (React)
+   - Public store interface
+   - Product browsing and search
+   - Shopping cart
+   - Checkout process
+   - Order history
+
+## Database Structure
+
+The application uses a relational database with the following main tables:
+- Users - Customer and admin accounts
+- Products - Product catalog
+- Categories - Product categories
+- Orders - Customer orders
+- Cart Items - Shopping cart contents
+- Wishlist Items - User wishlists
+- Promo Codes - Discount codes
+
+## Key Features Implemented
+
+- User authentication with JWT tokens
+- Role-based access control (Customer vs Store Manager)
+- Product catalog with categories
+- Shopping cart with session management
+- Complete order processing
+- Sales reports and analytics
+- Discount code system
+- Wishlist functionality
+- Low stock alerts
+- Responsive design for mobile and desktop
+
+## Deployment Platforms
+
+1. Direct Server Deployment
+   - IP: 135.13.9.61
+   - Uses Docker containers with Nginx reverse proxy
+
 2. Azure App Service
-
-## Direct Server Deployment (135.13.9.61)
-
-### Accessing the Application
-
-Customer Store: http://135.13.9.61/
-Admin Panel: http://135.13.9.61/admin
-Backend API: http://135.13.9.61:8000/api
-
-## Admin Panel
-
-You can access the admin dashboard at http://135.13.9.61/admin
-
-In the admin panel you can:
-- Add and manage products
-- Process customer orders
-- Manage user accounts
-- View sales reports and statistics
-- Create discount codes
-- Check inventory levels
-
-## Initial Setup
-
-After deployment, you need to open the firewall ports so the application is accessible.
-
-### Firewall Setup
-
-For Ubuntu/Debian:
-```bash
-sudo ufw allow 80/tcp
-sudo ufw allow 443/tcp
-sudo ufw allow 8000/tcp
-```
-
-For CentOS/RHEL:
-```bash
-sudo firewall-cmd --permanent --add-port=80/tcp
-sudo firewall-cmd --permanent --add-port=443/tcp
-sudo firewall-cmd --permanent --add-port=8000/tcp
-sudo firewall-cmd --reload
-```
-
-Ports needed:
-- 80: Main web server (Nginx)
-- 443: HTTPS/SSL
-- 8000: Backend API
-- 3000: Admin (optional, if not using Nginx)
-- 5173: Customer site (optional, if not using Nginx)
-
-## Running with Docker
-
-Start all services:
-```bash
-docker-compose up -d --build
-```
-
-Check status:
-```bash
-docker-compose ps
-```
-
-View logs:
-```bash
-docker-compose logs -f
-```
-
-To stop everything:
-```bash
-docker-compose down
-```
-
-## Checking Services
-
-Test if backend is working:
-```bash
-curl http://135.13.9.61:8000/api/products/products/
-```
-
-Test if frontend is working:
-```bash
-curl http://135.13.9.61/
-```
-
-Then visit in your browser:
-- http://135.13.9.61/ for customer store
-- http://135.13.9.61/admin for admin panel
-
-## User Accounts
-
-Store manager accounts are created with admin privileges and can access the admin panel.
-
-You can create additional accounts using the Django management command or through the admin panel if you already have a store manager account.
-
-## Production Setup
-
-These are important settings for production:
-
-### 1. Security Settings
-
-Edit `backend/grocery_store/settings.py`:
-
-```python
-DEBUG = False
-ALLOWED_HOSTS = ['135.13.9.61', 'yourdomain.com']
-SECRET_KEY = 'your-unique-secret-key'
-CSRF_TRUSTED_ORIGINS = ['http://135.13.9.61', 'https://yourdomain.com']
-```
-
-### 2. Database
-
-For production, switch from SQLite to PostgreSQL:
-- Use a strong password
-- Only allow localhost connections
-- Set up regular backups
-
-### 3. HTTPS/SSL
-
-Install Let's Encrypt certificate:
-
-```bash
-sudo apt-get install certbot python3-certbot-nginx
-sudo certbot certonly --nginx -d yourdomain.com
-```
-
-Then update nginx config with SSL certificate paths.
-
-### 4. Maintenance
-
-Keep these in mind:
-- Monitor disk space
-- Update Docker images regularly
-- Check logs for errors
-- Set up automated database backups
-- Monitor performance and response times
-
-## Troubleshooting
-
-Admin panel won't load:
-- Check if Docker services are running: `docker-compose ps`
-- Restart services: `docker-compose restart`
-- Check logs: `docker-compose logs backend`
-
-Can't login:
-- Verify you have the correct username and password
-- Check database connection in logs
-- Make sure the user account exists
-
-API returns 401 error:
-- Check your authentication token
-- Login again to get a new token
-- Check backend logs for details
-
-Check all logs:
-```bash
-docker-compose logs -f
-```
-
-Check specific service:
-```bash
-docker-compose logs backend
-docker-compose logs admin-panel
-docker-compose logs customer-frontend
-```
-
----
-
-Server: 135.13.9.61
-Admin: http://135.13.9.61/admin
-
-## Azure App Service Deployment
-
-The application is also deployed on Microsoft Azure using App Service containers.
-
-### Azure Access
-
-Azure App Service provides:
-- Managed hosting for the Docker containers
-- Automatic scaling
-- Built-in monitoring and diagnostics
-- SSL/HTTPS support
-- Easy deployment pipeline
-
-### Deploying to Azure
-
-1. Create Azure Container Registry:
-```bash
-az acr create --resource-group myGroup --name storeregistry --sku Basic
-```
-
-2. Build and push Docker image:
-```bash
-docker build -t storeregistry.azurecr.io/store:latest .
-az acr build --registry storeregistry --image store:latest .
-```
-
-3. Create App Service Plan:
-```bash
-az appservice plan create --name storePlan --resource-group myGroup --sku B1 --is-linux
-```
-
-4. Create Web App:
-```bash
-az webapp create --resource-group myGroup --plan storePlan --name storeapp --deployment-container-image-name-user storeregistry.azurecr.io/store:latest
-```
-
-5. Configure environment variables:
-```bash
-az webapp config appsettings set --resource-group myGroup --name storeapp --settings DEBUG=False SECRET_KEY=your-key
-```
-
-6. Enable continuous deployment from container registry:
-```bash
-az webapp deployment container config --name storeapp --resource-group myGroup --enable-cd true
-```
-
-### Azure Benefits
-
-- High availability and reliability
-- Automatic backups
-- Easy scaling up or down
-- Integrated monitoring
-- CDN support for static files
-- Built-in SSL certificates
-
-### Monitoring on Azure
-
-Check application logs:
-```bash
-az webapp log tail --resource-group myGroup --name storeapp
-```
-
-View metrics:
-- Go to Azure Portal
-- Navigate to App Service
-- Check Metrics blade for CPU, memory, requests
-
-### Connecting to Azure Database
-
-For production, use Azure Database for PostgreSQL:
-- Managed service
-- Automatic backups
-- High availability
-- Security built-in
-
-Update Django settings with Azure database connection string.
+   - Managed hosting with automatic scaling
+   - Integrated monitoring and diagnostics
+   - Built-in SSL/HTTPS support
+
+## Development Tools & Practices
+
+- Version control with Git
+- Docker for consistent environments
+- RESTful API design principles
+- React component-based architecture
+- Tailwind CSS for styling
+- JWT for authentication security
 
 ---
 
