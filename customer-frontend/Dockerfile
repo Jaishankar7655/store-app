@@ -17,7 +17,9 @@ RUN npm ci
 COPY . .
 
 # Build the application with environment variable
-RUN npm run build
+# Print the API URL to verify it's set correctly
+RUN echo "Building with VITE_API_URL=$VITE_API_URL" && \
+    npm run build
 
 # Production stage
 FROM nginx:alpine
