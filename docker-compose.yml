@@ -1,0 +1,100 @@
+services:
+  # PostgreSQL Database
+  db:
+    image: postgres:15-alpine
+    container_name: grocery_db
+    environment:
+      POSTGRES_DB: grocerystore
+      POSTGRES_USER: groceryuser
+      POSTGRES_PASSWORD: grocerypass
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U groceryuser -d grocerystore"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # Django Backend
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: grocery_backend
+    volumes:
+      - ./backend:/app
+      - static_volume:/app/staticfiles
+      - media_volume:/app/media
+    ports:
+      - "8000:8000"
+    environment:
+      - DEBUG=0
+      - IN_DOCKER=True
+      - DB_NAME=grocerystore
+      - DB_USER=groceryuser
+      - DB_PASSWORD=grocerypass
+      - DB_HOST=db
+      - DB_PORT=5432
+      - SECRET_KEY=django-insecure-gs5s#lu2(#30-kfd7)k-^ukh1wan9@b+t=a^_dly3#njv9#*#t
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/api/products/products/ || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Admin Panel Frontend
+  admin-panel:
+    build:
+      context: ./admin-panel
+      dockerfile: Dockerfile
+    container_name: grocery_admin_panel
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    environment:
+      - REACT_APP_API_URL=http://backend:8000/api
+
+  # Customer Frontend
+  customer-frontend:
+    build:
+      context: ./customer-frontend
+      dockerfile: Dockerfile
+    container_name: grocery_customer_frontend
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+    environment:
+      - REACT_APP_API_URL=http://backend:8000/api
+
+  # Nginx Reverse Proxy (optional - comment out if you want direct access)
+  nginx:
+    image: nginx:alpine
+    container_name: grocery_nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - static_volume:/static:ro
+      - media_volume:/media:ro
+    depends_on:
+      - backend
+      - admin-panel
+      - customer-frontend
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  static_volume:
+  media_volume:
+
