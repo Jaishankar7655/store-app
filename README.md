@@ -17,9 +17,7 @@ A full-stack e-commerce platform for online grocery shopping with dedicated inte
 **DevOps & Infrastructure**
 - Docker & Docker Compose
 - Nginx (Reverse Proxy)
-- Azure App Service
-- Azure Container Registry
-- Azure Database for PostgreSQL
+- Azure Virtual Machine (for deployment)
 
 ## Features
 
@@ -111,19 +109,28 @@ docker-compose up
 - Repository: https://github.com/Jaishankar7655/store-app
 
 **Azure Infrastructure**
-- Azure App Service for container hosting
-- Azure Container Registry for Docker image management
-- Azure Database for PostgreSQL for data persistence
+- Azure Virtual Machine for hosting containerized application
 
 ## Containerization Strategy
 
-The application uses Docker Compose to orchestrate multiple containers:
-- Backend API container running Django
-- Frontend containers for customer and admin interfaces
-- Nginx reverse proxy for request routing
-- PostgreSQL database container
+The entire application stack is containerized using Docker Compose, creating an isolated and reproducible environment. The orchestration includes:
+- Backend API container running Django with RESTful endpoints
+- Two separate frontend containers for customer and admin interfaces
+- Nginx reverse proxy for intelligent request routing and load balancing
+- PostgreSQL database container for data persistence
 
-This containerized approach ensures consistent environments across development, testing, and production deployments while optimizing resource utilization.
+This containerized approach ensures consistent environments across development, testing, and production deployments while optimizing resource utilization. The multi-container architecture allows independent scaling of services and simplifies the deployment pipeline.
+
+## Deployment Architecture
+
+The application is deployed on an Azure Virtual Machine, leveraging Docker Compose to manage the entire stack. This approach provides:
+- Complete control over the deployment environment
+- Cost-effective hosting compared to managed services
+- Simplified CI/CD pipeline using container images
+- Easy rollback capabilities through version-controlled containers
+- Horizontal scaling potential by replicating the VM setup
+
+The deployment uses a single VM running all containers, making it ideal for development, testing, and learning DevOps practices. The Nginx reverse proxy handles SSL termination and routes traffic to appropriate services based on URL patterns.
 
 ## Development Focus
 
