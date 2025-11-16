@@ -57,6 +57,17 @@ A comprehensive grocery store application with separate admin panel and customer
 - Node.js 16+
 - npm or yarn
 
+## 🌐 Public Deployment
+
+The application is configured for public deployment on IP: **135.13.9.61**
+
+**Access URLs:**
+- Customer Frontend: `http://135.13.9.61:5173` or `http://135.13.9.61/`
+- Admin Panel: `http://135.13.9.61:3000` or `http://135.13.9.61/admin`
+- Backend API: `http://135.13.9.61:8000/api`
+
+See [DEPLOYMENT.md](./DEPLOYMENT.md) for detailed deployment instructions.
+
 ## 🚀 Installation & Setup
 
 ### Backend Setup
