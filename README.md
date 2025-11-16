@@ -1,246 +1,98 @@
 # Online Grocery Store Application
 
-A complete full-stack e-commerce platform for an online grocery store. This project demonstrates modern web development using Django, React, and cloud deployment.
+> **📌 Important Note:** This project has all components (database, frontend, and backend) containerized in Docker using Docker Compose for smooth development and testing. Docker containerization was used to optimize resource usage and ensure smooth deployment. This setup is **not recommended for production use**. This project is primarily for **Azure and DevOps practice** where I am working on cloud deployment patterns and infrastructure management.
 
-## Project Overview
-
-This application provides a complete grocery shopping solution with separate interfaces for customers and store managers. It includes user authentication, product management, shopping cart, order processing, inventory tracking, and sales analytics.
+A full-stack e-commerce platform for an online grocery store with separate interfaces for customers and store managers.
 
 ## Technology Stack
 
 ### Backend
-- Django 4.2.7 - Python web framework
-- Django REST Framework - REST API development
-- Django REST Framework Simple JWT - Token authentication
-- Django CORS Headers - Cross-origin resource sharing
-- SQLite (development) / PostgreSQL (production)
-- Gunicorn - WSGI application server
+- Django 4.2.7
+- Django REST Framework
+- PostgreSQL / SQLite
 
 ### Frontend
-- React 18.3.1 - UI library
-- Vite 7.2.2 - Build tool and development server
-- Tailwind CSS 3.4.14 - Utility-first CSS framework
-- React Router DOM 6.26.2 - Client-side routing
-- Axios 1.7.7 - HTTP client library
+- React 18.3.1
+- Vite 7.2.2
+- Tailwind CSS 3.4.14
 
-### Cloud & Deployment
-- Azure App Service - Managed container hosting
-- Azure Container Registry - Docker image repository
-- Azure App Service Plans - Scalable hosting tier
-- Azure Database for PostgreSQL - Managed database
-- Azure Blob Storage - File storage service
-- Azure Monitor - Application monitoring and diagnostics
-
-### DevOps & Infrastructure
-- Docker - Container technology
-- Docker Compose - Multi-container orchestration
-- Nginx - Web server and reverse proxy
-- Git - Version control
-- GitHub - Code repository
-- CI/CD Pipelines - Automated deployment
-- Linux Server (Ubuntu) - Production server at 135.13.9.61
+### DevOps & Containerization
+- Docker & Docker Compose
+- Nginx
+- Azure (App Service, Container Registry, Database for PostgreSQL)
 
 ## Application Features
 
 ### For Customers
 - User registration and login
-- Browse products with category filters
-- Search and filter products by price, popularity
-- View detailed product information
-- Add items to shopping cart
-- Apply discount codes at checkout
-- Place orders and track history
-- Save items to wishlist
-- User profile management
+- Browse and filter products
+- Shopping cart management
+- Order placement and tracking
+- Wishlist functionality
+- Discount code application
 
 ### For Store Managers
-- Complete product management (add, edit, delete)
+- Product management (add, edit, delete)
 - Inventory and category management
-- Process and track customer orders
-- User account management
-- Sales reports with filters (by date, category, product)
+- Order processing and tracking
+- Sales reports and analytics
 - Discount code management
-- Monitor low stock items
-- View sales statistics and analytics
-
-### Backend API
-- JWT token-based authentication
-- Role-based access control
-- RESTful API endpoints
-- Complete CRUD operations for all resources
-- Sales reporting and analytics
-- Product recommendations
+- Low stock monitoring
 
 ## Project Structure
 
 ```
 backend/
-├── grocery_store/          - Django project settings
-├── users/                  - Authentication and user management
-├── products/               - Product and category management
-├── cart/                   - Shopping cart functionality
-├── orders/                 - Order processing and sales reports
-├── wishlist/               - User wishlist feature
-└── requirements.txt        - Python dependencies
+├── grocery_store/    - Django settings and configuration
+├── users/            - Authentication and user management
+├── products/         - Product and category management
+├── cart/             - Shopping cart functionality
+├── orders/           - Order processing and sales reports
+└── wishlist/         - User wishlist feature
 
 admin-panel/
-├── src/
-│   ├── components/         - Reusable React components
-│   ├── context/            - Auth context and state
-│   ├── pages/              - Admin dashboard pages
-│   ├── utils/              - Helper functions
-│   └── App.jsx             - Main app component
-└── package.json            - Node dependencies
+├── src/              - React admin dashboard
+└── package.json      - Dependencies
 
 customer-frontend/
-├── src/
-│   ├── components/         - Reusable React components
-│   ├── context/            - Auth context and state
-│   ├── pages/              - Customer pages
-│   ├── utils/              - Helper functions
-│   └── App.jsx             - Main app component
-└── package.json            - Node dependencies
+├── src/              - React customer store
+└── package.json      - Dependencies
 ```
 
-## Key Technologies & Practices
+## Setup & Running with Docker
 
-### Backend Development
-- RESTful API design
-- JWT authentication for security
-- Database migrations for schema management
-- Role-based access control (RBAC)
-- Error handling and validation
-- CORS configuration for cross-origin requests
+1. Clone the repository
+2. Ensure Docker and Docker Compose are installed
+3. Run: `docker-compose up`
+4. Access:
+   - Customer Store: http://localhost:3000
+   - Admin Panel: http://localhost:3001
+   - Backend API: http://localhost:8000/api
 
-### Frontend Development
-- Component-based architecture
-- State management with React Context
-- Responsive design with Tailwind CSS
-- Client-side routing with React Router
-- HTTP requests with Axios
-- Form validation and error handling
+## API Endpoints
 
-### DevOps & Infrastructure
-- Docker containerization for consistency
-- Docker Compose for multi-service orchestration
-- Nginx reverse proxy configuration
-- Environment-based configuration
-- Automated deployment
+**Authentication:**
+- POST `/api/auth/register/` - User registration
+- POST `/api/auth/login/` - User login
 
-## Database Schema
+**Products:**
+- GET `/api/products/products/` - List all products
+- GET `/api/products/categories/` - List categories
 
-The application uses a relational database with the following main entities:
+**Cart & Orders:**
+- GET `/api/cart/` - View shopping cart
+- POST `/api/orders/checkout/` - Create order
+- GET `/api/orders/orders/` - View user orders
 
-- Users - Customer and admin accounts
-- Products - Product catalog with details
-- Categories - Product categorization
-- Orders - Customer orders with items
-- Cart - Shopping cart items
-- Wishlist - User saved items
-- Promo Codes - Discount codes with validation
-
-## API Endpoints Overview
-
-Authentication:
-- POST /api/auth/register/ - User registration
-- POST /api/auth/login/ - User login
-- POST /api/auth/token/refresh/ - Token refresh
-- GET /api/auth/profile/ - Get user profile
-
-Products:
-- GET /api/products/products/ - List all products
-- GET /api/products/products/{id}/ - Product details
-- POST /api/products/products/ - Create product (admin)
-- PUT /api/products/products/{id}/ - Update product (admin)
-- DELETE /api/products/products/{id}/ - Delete product (admin)
-- GET /api/products/categories/ - List categories
-
-Cart & Orders:
-- GET /api/cart/ - View shopping cart
-- POST /api/cart/ - Add to cart
-- PUT /api/cart/items/{id}/ - Update quantity
-- DELETE /api/cart/items/{id}/ - Remove from cart
-- POST /api/orders/checkout/ - Create order
-- GET /api/orders/orders/ - View user orders
-
-Additional Features:
-- GET /api/wishlist/ - User wishlist
-- POST /api/wishlist/ - Add to wishlist
-- GET /api/products/promo-codes/ - Available discount codes
-- GET /api/orders/sales-report/ - Sales analytics (admin)
-- GET /api/products/low-stock/ - Low stock alerts (admin)
+**Admin Features:**
+- `/api/orders/sales-report/` - Sales analytics
+- `/api/products/low-stock/` - Low stock alerts
 
 ## Deployment
 
-The application is deployed on multiple platforms:
+Currently deployed and practiced on:
+- **Azure App Service** - Container hosting and management
+- **Azure Container Registry** - Docker image storage
+- **Azure Database for PostgreSQL** - Managed database service
 
-### Direct Server Deployment
-- IP: 135.13.9.61
-- Uses Docker containers with Nginx reverse proxy
-- URLs:
-  - Customer Store: http://135.13.9.61/
-  - Admin Panel: http://135.13.9.61/admin
-  - Backend API: http://135.13.9.61:8000/api
-
-### Azure Cloud Deployment
-- Hosted on Azure App Service
-- Managed containers
-- Auto-scaling capabilities
-- Built-in monitoring and diagnostics
-- SSL/HTTPS support
-
-## Development Highlights
-
-### Security Features
-- JWT token authentication
-- Password hashing
-- CORS protection
-- CSRF token validation
-- Role-based authorization
-- Input validation and sanitization
-
-### Code Quality
-- Modular architecture
-- Separation of concerns
-- Reusable components
-- Proper error handling
-- Database transaction management
-
-### Performance Considerations
-- Efficient database queries
-- Caching strategies
-- Response optimization
-- API pagination
-- Image optimization
-
-## User Roles & Permissions
-
-Customer Role:
-- Browse products
-- Manage cart and orders
-- View order history
-- Manage wishlist
-- Update profile
-
-Store Manager Role:
-- Full product management
-- User account management
-- Order processing
-- Sales reporting
-- Discount code management
-- Inventory control
-
-## Testing & Quality
-
-- API endpoint testing
-- User authentication testing
-- Cart and order functionality testing
-- Role-based access control testing
-- Frontend component testing
-
-## Conclusion
-
-This grocery store application demonstrates a complete, production-ready e-commerce platform using modern web technologies. It includes secure authentication, comprehensive business logic, responsive UI design, and reliable cloud deployment.
-
----
-
+This project serves as a learning platform for Azure DevOps and cloud deployment practices.
