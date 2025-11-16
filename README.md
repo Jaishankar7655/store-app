@@ -1,101 +1,140 @@
 # Online Grocery Store Application
 
-> **📌 Important Note:** This project has all components (database, frontend, and backend) containerized in Docker using Docker Compose for smooth development and testing. Docker containerization was used to optimize resource usage and ensure smooth deployment. This setup is **not recommended for production use**. This project is primarily for **Azure and DevOps practice** where I am working on cloud deployment patterns and infrastructure management.
-
-A full-stack e-commerce platform for an online grocery store with separate interfaces for customers and store managers.
+A full-stack e-commerce platform for online grocery shopping with dedicated interfaces for customers and store managers. This project demonstrates modern web development practices, containerization, and cloud deployment patterns using Azure services.
 
 ## Technology Stack
 
-### Backend
+**Backend**
 - Django 4.2.7
 - Django REST Framework
 - PostgreSQL / SQLite
 
-### Frontend
+**Frontend**
 - React 18.3.1
 - Vite 7.2.2
 - Tailwind CSS 3.4.14
 
-### DevOps & Containerization
+**DevOps & Infrastructure**
 - Docker & Docker Compose
-- Nginx
-- Azure (App Service, Container Registry, Database for PostgreSQL)
+- Nginx (Reverse Proxy)
+- Azure App Service
+- Azure Container Registry
+- Azure Database for PostgreSQL
 
-## Application Features
+## Features
 
-### For Customers
-- User registration and login
-- Browse and filter products
+**Customer Portal**
+- User authentication (registration and login)
+- Product browsing with filtering capabilities
 - Shopping cart management
-- Order placement and tracking
+- Order placement and order history tracking
 - Wishlist functionality
-- Discount code application
+- Discount code application at checkout
 
-### For Store Managers
-- Product management (add, edit, delete)
-- Inventory and category management
-- Order processing and tracking
-- Sales reports and analytics
+**Admin Dashboard**
+- Complete product lifecycle management (create, update, delete)
+- Inventory tracking and category management
+- Order processing and status updates
+- Sales analytics and reporting
 - Discount code management
-- Low stock monitoring
+- Low stock monitoring and alerts
 
-## Project Structure
+## Project Architecture
 
 ```
 backend/
-├── grocery_store/    - Django settings and configuration
-├── users/            - Authentication and user management
-├── products/         - Product and category management
-├── cart/             - Shopping cart functionality
-├── orders/           - Order processing and sales reports
-└── wishlist/         - User wishlist feature
+├── grocery_store/    # Django project configuration
+├── users/            # User authentication and profile management
+├── products/         # Product catalog and category operations
+├── cart/             # Shopping cart functionality
+├── orders/           # Order processing and sales analytics
+└── wishlist/         # User wishlist features
 
 admin-panel/
-├── src/              - React admin dashboard
-└── package.json      - Dependencies
+├── src/              # React-based admin dashboard
+└── package.json      # Frontend dependencies
 
 customer-frontend/
-├── src/              - React customer store
-└── package.json      - Dependencies
+├── src/              # React customer-facing store
+└── package.json      # Frontend dependencies
 ```
 
-## Setup & Running with Docker
+## API Documentation
 
-1. Clone the repository
-2. Ensure Docker and Docker Compose are installed
-3. Run: `docker-compose up`
+**Authentication Endpoints**
+- `POST /api/auth/register/` - Create new user account
+- `POST /api/auth/login/` - Authenticate existing user
 
-## Live Deployment
+**Product Endpoints**
+- `GET /api/products/products/` - Retrieve product catalog
+- `GET /api/products/categories/` - Retrieve product categories
 
-- **Repository:** https://github.com/Jaishankar7655/store-app
-- **Frontend (Customer Store):** http://135.13.9.61/
-- **Admin Panel:** http://135.13.9.61/admin/
-- **Backend API:** http://135.13.9.61:8000/api
+**Cart & Order Endpoints**
+- `GET /api/cart/` - Retrieve current shopping cart
+- `POST /api/orders/checkout/` - Process order checkout
+- `GET /api/orders/orders/` - Retrieve user order history
 
-## API Endpoints
+**Admin Endpoints**
+- `GET /api/orders/sales-report/` - Generate sales analytics
+- `GET /api/products/low-stock/` - Retrieve low inventory alerts
 
-**Authentication:**
-- POST `/api/auth/register/` - User registration
-- POST `/api/auth/login/` - User login
+## Local Development Setup
 
-**Products:**
-- GET `/api/products/products/` - List all products
-- GET `/api/products/categories/` - List categories
+**Prerequisites**
+- Docker and Docker Compose installed
+- Git
 
-**Cart & Orders:**
-- GET `/api/cart/` - View shopping cart
-- POST `/api/orders/checkout/` - Create order
-- GET `/api/orders/orders/` - View user orders
+**Steps**
 
-**Admin Features:**
-- `/api/orders/sales-report/` - Sales analytics
-- `/api/products/low-stock/` - Low stock alerts
+1. Clone the repository:
+```bash
+git clone https://github.com/Jaishankar7655/store-app.git
+cd store-app
+```
+
+2. Start the application:
+```bash
+docker-compose up
+```
+
+3. Access the application:
+- Customer Store: http://localhost
+- Admin Panel: http://localhost/admin
+- API: http://localhost:8000/api
 
 ## Deployment
 
-Currently deployed and practiced on:
-- **Azure App Service** - Container hosting and management
-- **Azure Container Registry** - Docker image storage
-- **Azure Database for PostgreSQL** - Managed database service
+**Live Application**
+- Customer Store: http://135.13.9.61/
+- Admin Panel: http://135.13.9.61/admin/
+- API: http://135.13.9.61:8000/api
+- Repository: https://github.com/Jaishankar7655/store-app
 
-This project serves as a learning platform for Azure DevOps and cloud deployment practices.
+**Azure Infrastructure**
+- Azure App Service for container hosting
+- Azure Container Registry for Docker image management
+- Azure Database for PostgreSQL for data persistence
+
+## Containerization Strategy
+
+The application uses Docker Compose to orchestrate multiple containers:
+- Backend API container running Django
+- Frontend containers for customer and admin interfaces
+- Nginx reverse proxy for request routing
+- PostgreSQL database container
+
+This containerized approach ensures consistent environments across development, testing, and production deployments while optimizing resource utilization.
+
+## Development Focus
+
+This project serves as a practical implementation for:
+- Full-stack web application development with Django and React
+- RESTful API design and implementation
+- Container orchestration with Docker Compose
+- Cloud deployment patterns using Azure services
+- DevOps practices including CI/CD pipelines
+- Infrastructure as Code concepts
+
+## Notes
+
+The Docker Compose setup is optimized for development and testing environments. Production deployments should utilize managed services, proper secrets management, and additional security configurations appropriate for production workloads.
