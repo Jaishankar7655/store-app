@@ -1,109 +1,256 @@
-# Deployment Guide - Public IP: 135.13.9.61
+# Deployment Guide
 
-This guide explains how to deploy and access the grocery store application using your public IP address.
+The application is deployed in two places:
 
-## Server Configuration
+1. Direct Server: IP 135.13.9.61
+2. Azure App Service
 
-Your application is configured to run on public IP: **135.13.9.61**
+## Direct Server Deployment (135.13.9.61)
 
-## Access URLs
+### Accessing the Application
 
-After deployment, you can access the services via:
+Customer Store: http://135.13.9.61/
+Admin Panel: http://135.13.9.61/admin
+Backend API: http://135.13.9.61:8000/api
 
-### Option 1: Using Nginx Reverse Proxy (Port 80)
-- **Customer Frontend**: `http://135.13.9.61/`
-- **Admin Panel**: `http://135.13.9.61/admin`
-- **Backend API**: `http://135.13.9.61/api`
+## Admin Panel
 
-### Option 2: Direct Port Access
-- **Customer Frontend**: `http://135.13.9.61:5173`
-- **Admin Panel**: `http://135.13.9.61:3000`
-- **Backend API**: `http://135.13.9.61:8000/api`
+You can access the admin dashboard at http://135.13.9.61/admin
 
-## Deployment Steps
+In the admin panel you can:
+- Add and manage products
+- Process customer orders
+- Manage user accounts
+- View sales reports and statistics
+- Create discount codes
+- Check inventory levels
 
-### 1. Ensure Firewall Rules
+## Initial Setup
 
-Make sure these ports are open in your server firewall:
-- Port 80 (HTTP - Nginx)
-- Port 443 (HTTPS - if using SSL)
-- Port 3000 (Admin Panel - optional)
-- Port 5173 (Customer Frontend - optional)
-- Port 8000 (Backend API - optional)
-- Port 5432 (PostgreSQL - should be internal only)
+After deployment, you need to open the firewall ports so the application is accessible.
 
-**Ubuntu/Debian:**
+### Firewall Setup
+
+For Ubuntu/Debian:
 ```bash
 sudo ufw allow 80/tcp
 sudo ufw allow 443/tcp
-sudo ufw allow 3000/tcp
-sudo ufw allow 5173/tcp
 sudo ufw allow 8000/tcp
 ```
 
-**CentOS/RHEL:**
+For CentOS/RHEL:
 ```bash
 sudo firewall-cmd --permanent --add-port=80/tcp
 sudo firewall-cmd --permanent --add-port=443/tcp
-sudo firewall-cmd --permanent --add-port=3000/tcp
-sudo firewall-cmd --permanent --add-port=5173/tcp
 sudo firewall-cmd --permanent --add-port=8000/tcp
 sudo firewall-cmd --reload
 ```
 
-### 2. Deploy with Docker
+Ports needed:
+- 80: Main web server (Nginx)
+- 443: HTTPS/SSL
+- 8000: Backend API
+- 3000: Admin (optional, if not using Nginx)
+- 5173: Customer site (optional, if not using Nginx)
 
+## Running with Docker
+
+Start all services:
 ```bash
-# Build and start all services
 docker-compose up -d --build
+```
 
-# View logs
-docker-compose logs -f
-
-# Check service status
+Check status:
+```bash
 docker-compose ps
 ```
 
-### 3. Create Store Manager Account
-
+View logs:
 ```bash
-docker-compose exec backend python manage.py create_store_manager \
-  --username admin \
-  --email admin@grocerystore.com \
-  --password your_secure_password
+docker-compose logs -f
 ```
 
-### 4. Verify Deployment
+To stop everything:
+```bash
+docker-compose down
+```
 
-- Check backend: `curl http://135.13.9.61:8000/api/products/products/`
-- Check customer frontend: Open `http://135.13.9.61:5173` in browser
-- Check admin panel: Open `http://135.13.9.61:3000` in browser
+## Checking Services
 
-## Production Recommendations
+Test if backend is working:
+```bash
+curl http://135.13.9.61:8000/api/products/products/
+```
+
+Test if frontend is working:
+```bash
+curl http://135.13.9.61/
+```
+
+Then visit in your browser:
+- http://135.13.9.61/ for customer store
+- http://135.13.9.61/admin for admin panel
+
+## User Accounts
+
+Store manager accounts are created with admin privileges and can access the admin panel.
+
+You can create additional accounts using the Django management command or through the admin panel if you already have a store manager account.
+
+## Production Setup
+
+These are important settings for production:
 
 ### 1. Security Settings
 
-Update `backend/grocery_store/settings.py`:
+Edit `backend/grocery_store/settings.py`:
+
 ```python
 DEBUG = False
 ALLOWED_HOSTS = ['135.13.9.61', 'yourdomain.com']
-SECRET_KEY = 'your-secret-key-here'  # Generate a new one!
+SECRET_KEY = 'your-unique-secret-key'
+CSRF_TRUSTED_ORIGINS = ['http://135.13.9.61', 'https://yourdomain.com']
 ```
 
-### 2. SSL/HTTPS Setup
+### 2. Database
 
-For production, set up SSL certificates:
+For production, switch from SQLite to PostgreSQL:
+- Use a strong password
+- Only allow localhost connections
+- Set up regular backups
 
-1. Install Certbot:
+### 3. HTTPS/SSL
+
+Install Let's Encrypt certificate:
+
 ```bash
-sudo apt-get update
 sudo apt-get install certbot python3-certbot-nginx
+sudo certbot certonly --nginx -d yourdomain.com
 ```
 
-2. Get SSL certificate:
+Then update nginx config with SSL certificate paths.
+
+### 4. Maintenance
+
+Keep these in mind:
+- Monitor disk space
+- Update Docker images regularly
+- Check logs for errors
+- Set up automated database backups
+- Monitor performance and response times
+
+## Troubleshooting
+
+Admin panel won't load:
+- Check if Docker services are running: `docker-compose ps`
+- Restart services: `docker-compose restart`
+- Check logs: `docker-compose logs backend`
+
+Can't login:
+- Verify you have the correct username and password
+- Check database connection in logs
+- Make sure the user account exists
+
+API returns 401 error:
+- Check your authentication token
+- Login again to get a new token
+- Check backend logs for details
+
+Check all logs:
 ```bash
-sudo certbot --nginx -d 135.13.9.61
+docker-compose logs -f
 ```
+
+Check specific service:
+```bash
+docker-compose logs backend
+docker-compose logs admin-panel
+docker-compose logs customer-frontend
+```
+
+---
+
+Server: 135.13.9.61
+Admin: http://135.13.9.61/admin
+
+## Azure App Service Deployment
+
+The application is also deployed on Microsoft Azure using App Service containers.
+
+### Azure Access
+
+Azure App Service provides:
+- Managed hosting for the Docker containers
+- Automatic scaling
+- Built-in monitoring and diagnostics
+- SSL/HTTPS support
+- Easy deployment pipeline
+
+### Deploying to Azure
+
+1. Create Azure Container Registry:
+```bash
+az acr create --resource-group myGroup --name storeregistry --sku Basic
+```
+
+2. Build and push Docker image:
+```bash
+docker build -t storeregistry.azurecr.io/store:latest .
+az acr build --registry storeregistry --image store:latest .
+```
+
+3. Create App Service Plan:
+```bash
+az appservice plan create --name storePlan --resource-group myGroup --sku B1 --is-linux
+```
+
+4. Create Web App:
+```bash
+az webapp create --resource-group myGroup --plan storePlan --name storeapp --deployment-container-image-name-user storeregistry.azurecr.io/store:latest
+```
+
+5. Configure environment variables:
+```bash
+az webapp config appsettings set --resource-group myGroup --name storeapp --settings DEBUG=False SECRET_KEY=your-key
+```
+
+6. Enable continuous deployment from container registry:
+```bash
+az webapp deployment container config --name storeapp --resource-group myGroup --enable-cd true
+```
+
+### Azure Benefits
+
+- High availability and reliability
+- Automatic backups
+- Easy scaling up or down
+- Integrated monitoring
+- CDN support for static files
+- Built-in SSL certificates
+
+### Monitoring on Azure
+
+Check application logs:
+```bash
+az webapp log tail --resource-group myGroup --name storeapp
+```
+
+View metrics:
+- Go to Azure Portal
+- Navigate to App Service
+- Check Metrics blade for CPU, memory, requests
+
+### Connecting to Azure Database
+
+For production, use Azure Database for PostgreSQL:
+- Managed service
+- Automatic backups
+- High availability
+- Security built-in
+
+Update Django settings with Azure database connection string.
+
+---
 
 3. Update CORS settings to include HTTPS:
 ```python
