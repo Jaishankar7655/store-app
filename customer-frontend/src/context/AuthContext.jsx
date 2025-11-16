@@ -3,7 +3,13 @@ import axios from 'axios'
 
 const AuthContext = createContext()
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api'
+// Get API URL and ensure it doesn't have trailing slash
+const getApiUrl = () => {
+  const url = import.meta.env.VITE_API_URL || 'http://135.13.9.61:8000/api'
+  return url.endsWith('/') ? url.slice(0, -1) : url
+}
+
+const API_URL = getApiUrl()
 
 export const useAuth = () => {
   const context = useContext(AuthContext)
