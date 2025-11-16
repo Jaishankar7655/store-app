@@ -55,26 +55,26 @@ services:
     build:
       context: ./admin-panel
       dockerfile: Dockerfile
+      args:
+        VITE_API_URL: http://135.13.9.61:8000/api
     container_name: grocery_admin_panel
     ports:
       - "3000:80"
     depends_on:
       - backend
-    environment:
-      - VITE_API_URL=http://135.13.9.61:8000/api
 
   # Customer Frontend
   customer-frontend:
     build:
       context: ./customer-frontend
       dockerfile: Dockerfile
+      args:
+        VITE_API_URL: http://135.13.9.61:8000/api
     container_name: grocery_customer_frontend
     ports:
       - "5173:80"
     depends_on:
       - backend
-    environment:
-      - VITE_API_URL=http://135.13.9.61:8000/api
 
   # Nginx Reverse Proxy (optional - comment out if you want direct access)
   nginx:

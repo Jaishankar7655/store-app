@@ -3,6 +3,10 @@ FROM node:18-alpine AS builder
 # Set working directory
 WORKDIR /app
 
+# Accept build argument for API URL
+ARG VITE_API_URL=http://135.13.9.61:8000/api
+ENV VITE_API_URL=$VITE_API_URL
+
 # Copy package files
 COPY package*.json ./
 
@@ -12,7 +16,7 @@ RUN npm ci
 # Copy source files
 COPY . .
 
-# Build the application
+# Build the application with environment variable
 RUN npm run build
 
 # Production stage
