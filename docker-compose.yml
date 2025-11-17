@@ -9,7 +9,7 @@ services:
       POSTGRES_PASSWORD: grocerypass
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    # Database port should not be exposed publicly for security
+    # Database port should 
     # ports:
     #   - "5432:5432"
     healthcheck:
@@ -76,7 +76,7 @@ services:
     depends_on:
       - backend
 
-  # Nginx Reverse Proxy (optional - comment out if you want direct access)
+  # Nginx reverse 
   nginx:
     image: nginx:alpine
     container_name: grocery_nginx
